@@ -20,12 +20,8 @@ import {
 } from "@nextui-org/react";
 import { cn } from "@nextui-org/theme";
 import React from "react";
-import getConfig from 'next/config';
 
-const { publicRuntimeConfig } = getConfig();
-const basePath = publicRuntimeConfig.basePath || '';
-
-import { title } from "@/components/primitives";
+import { subtitle } from "@/components/primitives";
 const splitMarker = "\n====SPLIT CHAPTER====\n";
 const fileList = [
   "example-1.txt",
@@ -66,7 +62,7 @@ export default function Home() {
 
   useEffect(() => {
     fileList.forEach((filename) => {
-      fetch(`${basePath}/input-txt/${filename}`)
+      fetch(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/input-txt/${filename}`)
         .then((res) => res.text())
         .then((text) => {
           setFileContents((prev) => ({ ...prev, [filename]: text }));
@@ -89,6 +85,9 @@ export default function Home() {
   const insertSplitMarker = () => {
     if (!textareaRef.current) return;
     const textarea = textareaRef.current;
+    if (textarea.selectionStart == null || textarea.selectionEnd == null) {
+      return;
+    }
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
     const before = editContent.slice(0, start);
@@ -118,17 +117,13 @@ export default function Home() {
   return (
     <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
       <div className="inline-block max-w-xl text-center justify-center">
-        <span className={title()}>Place your changes here</span>
+        <span className={`${subtitle()} whitespace-pre-line`}>{`为了方便大家调试，项目自动拉取了几个example.txt
+        可以在Story下拉框中选择提供的demo文件
+        欠缺一些需求细节，就按自己想法做了
+        欢迎交流
+        `}</span>
       </div>
-      <div className="mt-8 gap-16">
-        <Snippet hideCopyButton hideSymbol className="gap-4" variant="bordered">
-          <span>
-            Get started by editing <Code color="primary">app/page.tsx</Code>
-          </span>
-          <span>Please feel free to use the example components below.</span>
-        </Snippet>
-      </div>
-      <div className="pt-6 w-48">
+      <div className="w-48">
         <Select
           items={fileList.map((filename) => ({
             key: filename,
@@ -248,7 +243,7 @@ export default function Home() {
               <div className="w-full flex-1 flex-col min-w-[400px]">
                 <div className={cn("flex flex-col gap-4")}>
                   <div className="flex flex-col items-start">
-                    <div className="relative mb-5 w-full h-[400px] bg-slate-50 dark:bg-gray-800 rounded-lg">
+                    <div className="relative mb-5 w-full h-[500px] bg-slate-50 dark:bg-gray-800 rounded-lg">
                       <div className="absolute inset-x-4 top-4 z-10 flex justify-between items-center">
                         <div className="flex justify-between">
                           <Button
@@ -262,7 +257,7 @@ export default function Home() {
                               />
                             }
                             variant="flat"
-                            onClick={insertSplitMarker}
+                            onPress={insertSplitMarker}
                           >
                             Insert chapter split
                           </Button>
@@ -279,7 +274,7 @@ export default function Home() {
                             />
                           }
                           variant="flat"
-                          onClick={handleSplit}
+                          onPress={handleSplit}
                         >
                           Split
                         </Button>
