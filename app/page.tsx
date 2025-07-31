@@ -20,6 +20,10 @@ import {
 } from "@nextui-org/react";
 import { cn } from "@nextui-org/theme";
 import React from "react";
+import getConfig from 'next/config';
+
+const { publicRuntimeConfig } = getConfig();
+const basePath = publicRuntimeConfig.basePath || '';
 
 import { title } from "@/components/primitives";
 const splitMarker = "\n====SPLIT CHAPTER====\n";
@@ -62,7 +66,7 @@ export default function Home() {
 
   useEffect(() => {
     fileList.forEach((filename) => {
-      fetch(`/input-txt/${filename}`)
+      fetch(`${basePath}/input-txt/${filename}`)
         .then((res) => res.text())
         .then((text) => {
           setFileContents((prev) => ({ ...prev, [filename]: text }));

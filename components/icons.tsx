@@ -2,6 +2,11 @@ import * as React from "react";
 
 import { IconSvgProps } from "@/types";
 
+import getConfig from 'next/config';
+
+const { publicRuntimeConfig } = getConfig();
+const basePath = publicRuntimeConfig.basePath || '';
+
 export const Logo: React.FC<{
   size?: number;
   width?: number;
@@ -10,7 +15,7 @@ export const Logo: React.FC<{
   <img
     alt="Logo"
     height={height}
-    src="/hearbyte_logo.png" // Adjust the path to where your PNG image is located
+    src={`${basePath}/hearbyte_logo.png`} // Adjust the path to where your PNG image is located
     width={width}
     {...props}
   />
